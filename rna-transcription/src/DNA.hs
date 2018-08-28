@@ -3,13 +3,13 @@ module DNA (toRNA) where
 import Control.Applicative
 
 toRNA :: String -> Maybe String
-toRNA xs = foldl connect (Just "") $ fmap compl xs
+toRNA xs = reverse <$> (foldr connect (Just "") $ fmap compl xs)
 
-connect :: Maybe String -> Maybe Char -> Maybe String
-connect s c = liftA2 (flip append) s c
+connect :: Maybe Char -> Maybe String -> Maybe String
+connect xs c = append <$> xs <*> c
 
 append :: Char -> String -> String
-append c = reverse . (:) c . reverse
+append c xs = xs ++ [c]
 
 compl :: Char -> Maybe Char
 compl 'G' = Just 'C'

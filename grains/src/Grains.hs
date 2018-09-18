@@ -1,10 +1,11 @@
 module Grains (square, total) where
 
+import Control.Monad
+
 square :: Integer -> Maybe Integer
-square n | n > 0 && n <= 64 = Just $ 2 ^ (n - 1)
+square n | n > 0 && n <= 64 = Just . (2^) . (subtract 1) $ n
          | otherwise        = Nothing
 
 total :: Integer
-total =
-  let squares = sequence $ square <$> [1..64]
-  in maybe 0 sum squares
+total = sum $ fmap (2^) . fmap (subtract 1) $ [1..64]
+

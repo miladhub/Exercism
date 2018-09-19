@@ -7,5 +7,5 @@ square n | n > 0 && n <= 64 = Just . (2^) $ n - 1
          | otherwise        = Nothing
 
 total :: Integer
-total = sum $ fmap (2^) $ [0..63]
+total = sum $ map (2^) $ [0..63]
 

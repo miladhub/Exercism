@@ -4,30 +4,19 @@ import Data.Map (Map, fromList)
 
 nucleotideCounts :: String -> Either String (Map Char Int)
 nucleotideCounts xs =
-  let maybe = check xs
-  in case maybe of
+  let checked = checkOnlyNucleotides xs
+  in case checked of
     Nothing -> Left xs
-    (Just s) -> Right $ toMap s
+    (Just xs) -> Right $ countChars xs
 
-toMap :: String -> Map Char Int
-toMap s = fromList $ countList s
+countChars :: String -> Map Char Int
+countChars xs = fromList $ fmap (\c -> (c, length $ filter (== c) xs)) "ACGT"
 
-countList :: String -> [(Char, Int)]
-countList xs = [
-    ('A', count 'A' xs),
-    ('C', count 'C' xs),
-    ('G', count 'G' xs),
-    ('T', count 'T' xs)
-  ]
+checkOnlyNucleotides :: String -> Maybe String
+checkOnlyNucleotides xs = sequence $ fmap pickNucleotide xs
 
-count :: Char -> String -> Int
-count c xs = length $ filter (==c) xs
-
-check :: String -> Maybe String
-check xs = sequence $ fmap foo xs
-
-foo :: Char -> Maybe Char
-foo c =
+pickNucleotide :: Char -> Maybe Char
+pickNucleotide c =
       if elem c "ACGT"
       then Just c
       else Nothing

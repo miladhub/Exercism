@@ -1,7 +1,6 @@
 module DNA (nucleotideCounts) where
 
-import Data.Map --(Map)
-import Data.List
+import Data.Map (Map, fromList)
 
 nucleotideCounts :: String -> Either String (Map Char Int)
 nucleotideCounts xs =
@@ -14,9 +13,15 @@ toMap :: String -> Map Char Int
 toMap s = fromList $ countList s
 
 countList :: String -> [(Char, Int)]
-countList xs =
-  let g = group xs
-  in zip (fmap head g) (fmap length g) 
+countList xs = [
+    ('A', count 'A' xs),
+    ('C', count 'C' xs),
+    ('G', count 'G' xs),
+    ('T', count 'T' xs)
+  ]
+
+count :: Char -> String -> Int
+count c xs = length $ filter (==c) xs
 
 check :: String -> Maybe String
 check xs = sequence $ fmap foo xs

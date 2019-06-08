@@ -1,18 +1,29 @@
 module DNA (nucleotideCounts) where
 
 import Data.Map (Map, fromList)
+import Text.Read
+import Data.Bifunctor
+
+data Nucleotide = A | C | G | T
+  deriving (Eq, Ord, Read, Show)
 
 nucleotideCounts :: String -> Either String (Map Char Int)
-nucleotideCounts xs = fmap countChars $ checkOnlyNucleotides xs 
+nucleotideCounts xs =
+  let nucleotides = fmap countNucleotides $ checkOnlyNucleotides xs 
+      chars = (fmap . fmap) (first asChar) nucleotides
+  in fmap fromList chars
 
-countChars :: String -> Map Char Int
-countChars xs = fromList $ fmap (\c -> (c, length $ filter (== c) xs)) "ACGT"
+asChar :: Nucleotide -> Char
+asChar n =
+  let s = show n
+  in s !! 0
 
-checkOnlyNucleotides :: String -> Either String String
+countNucleotides :: [Nucleotide] -> [(Nucleotide, Int)]
+countNucleotides ns = fmap (\n -> (n, length $ filter (== n) ns)) [A,C,G,T]
+
+checkOnlyNucleotides :: String -> Either String [Nucleotide]
 checkOnlyNucleotides xs = sequence $ fmap pickNucleotide xs
 
-pickNucleotide :: Char -> Either String Char
+pickNucleotide :: Char -> Either String Nucleotide
 pickNucleotide c =
-      if elem c "ACGT"
-      then Right c
-      else Left [c]
+  readEither [c]

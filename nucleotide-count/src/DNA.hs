@@ -1,6 +1,6 @@
 module DNA (nucleotideCounts) where
 
-import Data.Map (Map, fromList)
+import Data.Map (Map, fromList, mapKeys, fromListWith)
 import Text.Read
 import Data.Bifunctor
 
@@ -10,19 +10,21 @@ data Nucleotide = A | C | G | T
 nucleotideCounts :: String -> Either String (Map Char Int)
 nucleotideCounts xs =
   let nucleotides = fmap countNucleotides $ checkOnlyNucleotides xs 
-      chars = (fmap . fmap) (first asChar) nucleotides
-  in fmap fromList chars
+  in fmap (mapKeys asChar) nucleotides
 
 asChar :: Nucleotide -> Char
 asChar n =
   let s = show n
   in s !! 0
 
-countNucleotides :: [Nucleotide] -> [(Nucleotide, Int)]
-countNucleotides ns = fmap (\n -> (n, length $ filter (== n) ns)) [A,C,G,T]
+countNucleotides :: [Nucleotide] -> Map Nucleotide Int
+countNucleotides ns =
+  let zeroes = (,) <$> [A,G,C,T] <*> [0]
+      ones   = (,) <$> ns        <*> [1]
+  in fromListWith (+) $ zeroes ++ ones
 
 checkOnlyNucleotides :: String -> Either String [Nucleotide]
-checkOnlyNucleotides xs = sequence $ fmap pickNucleotide xs
+checkOnlyNucleotides xs = traverse pickNucleotide xs
 
 pickNucleotide :: Char -> Either String Nucleotide
 pickNucleotide c =

@@ -19,8 +19,8 @@ asChar n =
 
 countNucleotides :: [Nucleotide] -> Map Nucleotide Int
 countNucleotides ns =
-  let zeroes = (,) <$> [A,G,C,T] <*> [0]
-      ones   = (,) <$> ns        <*> [1]
+  let zeroes = zip [A,G,C,T] $ repeat 0
+      ones   = zip ns $ repeat 1 
   in fromListWith (+) $ zeroes ++ ones
 
 checkOnlyNucleotides :: String -> Either String [Nucleotide]

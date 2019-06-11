@@ -1,13 +1,14 @@
--- This file has been generated from package.yaml by hpack version 0.20.0.
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.31.1.
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: a314c18c8f2f86deb8d736449a062d26e619cb8e64c562223452dd9d92c254b8
+-- hash: efa2021be99122de89fcea9053313922940c90b14b2265fc8b5041a4385ebec8
 
 name:           connect
 version:        1.1.0.4
 build-type:     Simple
-cabal-version:  >= 1.10
 
 library
   hs-source-dirs:

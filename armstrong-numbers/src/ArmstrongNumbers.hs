@@ -1,9 +1,12 @@
 module ArmstrongNumbers (armstrong) where
 
-armstrong :: (Integral a, Show a, Read a) => a -> Bool
-armstrong a =
-  let n = length . digits $ a
-  in (== a) . sum . fmap (^n) . digits $ a
+import Data.Char
 
-digits :: (Integral a, Show a, Read a) => a -> [a]
-digits = fmap (read . (:[])) . show
+armstrong :: Int -> Bool
+armstrong a =
+  let asDigits = digits a
+      n = length asDigits
+  in (== a) . sum . fmap (^n) $ asDigits
+
+digits :: Int -> [Int]
+digits = fmap digitToInt . show

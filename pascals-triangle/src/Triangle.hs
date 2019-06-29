@@ -1,7 +1,6 @@
 module Triangle (rows) where
 
 rows :: Int -> [[Int]]
-rows 0 = []
 rows n = take n $ iterate next [1]
 
 next :: [Int] -> [Int]

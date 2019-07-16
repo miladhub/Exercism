@@ -16,12 +16,14 @@ connect :: [(Int, Int)] -> Maybe [(Int, Int)]
 connect []  = Just []
 connect [s] = Just [s]
 connect (h : t@(th : tt)) 
-  | connects h th               = pure (:) <*> Just h        <*> connect t
-  | connects (swap h) th        = pure (:) <*> Just (swap h) <*> connect t
-  | connects h (swap th)        = pure (:) <*> Just h        <*> connect ((swap th) : tt)
-  | connects (swap h) (swap th) = pure (:) <*> Just (swap h) <*> connect ((swap th) : tt)
-  | otherwise                   = Nothing
+  | connects h th   = Just (h:)  <*> connect t
+  | connects hs th  = Just (hs:) <*> connect t
+  | connects h ths  = Just (h:)  <*> connect (ths : tt)
+  | connects hs ths = Just (hs:) <*> connect (ths : tt)
+  | otherwise       = Nothing
   where
+    hs = swap h
+    ths = swap th
     connects (_, a) (b, _) = a == b
 
 loops :: Maybe [(Int, Int)] -> Bool

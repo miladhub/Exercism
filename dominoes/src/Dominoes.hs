@@ -2,15 +2,14 @@ module Dominoes (chain) where
 
 import Data.Tuple (swap)
 import Data.List (permutations)
+import Data.Foldable (asum)
 
 chain :: [(Int, Int)] -> Maybe [(Int, Int)]
 chain d =
   let ps        = permutations d
       connected = fmap connect ps
-      looping   = filter loops connected
-  in case looping of
-    [] -> Nothing
-    _  -> head looping
+      looping   = filter (maybe False loops) connected
+  in asum looping
 
 connect :: [(Int, Int)] -> Maybe [(Int, Int)]                                              
 connect []  = Just []
@@ -26,8 +25,7 @@ connect (h : t@(th : tt))
     ths = swap th
     connects (_, a) (b, _) = a == b
 
-loops :: Maybe [(Int, Int)] -> Bool
-loops Nothing    = False
-loops (Just [])  = True
-loops (Just [a]) = fst a == snd a
-loops (Just l)   = fst (head l) == snd (last l)
+loops :: [(Int, Int)] -> Bool
+loops []  = True
+loops [a] = fst a == snd a
+loops l   = fst (head l) == snd (last l)

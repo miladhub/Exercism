@@ -12,20 +12,20 @@ chain d =
   in asum looping
 
 connect :: [(Int, Int)] -> Maybe [(Int, Int)]                                              
-connect []  = Just []
-connect [s] = Just [s]
-connect (h : t@(th : tt)) 
-  | connects h th   = Just (h:)  <*> connect t
-  | connects hs th  = Just (hs:) <*> connect t
+connect (h : (th : tt)) 
+  | connects h th   = Just (h:)  <*> connect (th : tt)
+  | connects hs th  = Just (hs:) <*> connect (th : tt)
   | connects h ths  = Just (h:)  <*> connect (ths : tt)
   | connects hs ths = Just (hs:) <*> connect (ths : tt)
   | otherwise       = Nothing
   where
-    hs = swap h
+    hs  = swap h
     ths = swap th
-    connects (_, a) (b, _) = a == b
+connect l = Just l
 
 loops :: [(Int, Int)] -> Bool
 loops []  = True
-loops [a] = fst a == snd a
-loops l   = fst (head l) == snd (last l)
+loops l   = connects (last l) (head l)
+
+connects :: (Int, Int) -> (Int, Int) -> Bool
+connects a b = snd a == fst b

@@ -6,7 +6,7 @@ import Data.Foldable (asum)
 
 chain :: [(Int, Int)] -> Maybe [(Int, Int)]
 chain d =
-  let ps        = permutations d >>= \p -> sequence $ fmap (\e -> [e, swap e]) p
+  let ps        = permutations d >>= mapM (\e -> [e, swap e])
       connected = fmap connect ps
       looping   = filter (maybe False loops) connected
   in asum looping

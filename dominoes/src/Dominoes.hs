@@ -2,11 +2,12 @@ module Dominoes (chain) where
 
 import Data.Tuple (swap)
 import Data.List (permutations)
+import Control.Applicative (liftA2)
 
 chain :: [(Int, Int)] -> Maybe [(Int, Int)]
 chain d =
   let perms = permutations d >>= mapM (\e -> [e, swap e])
-      matches = filter (\p -> connected p && looped p) perms
+      matches = filter (liftA2 (&&) connected looped) perms
   in
     if null matches then
       Nothing

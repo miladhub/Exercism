@@ -103,7 +103,7 @@ cases = [ Case { description = "empty input = empty output"
                , expected    = True
                }
         , Case { description = "improving Exercism!"
-               , input       = [(1, 2), (2, 3), (2,1)]
+               , input       = [(1, 2), (2, 3), (2, 1)]
                , expected    = False
                }
         ]

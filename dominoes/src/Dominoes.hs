@@ -2,6 +2,7 @@ module Dominoes (chain) where
 
 import Data.Tuple (swap)
 import Safe (headMay)
+import Data.List (delete)
 
 chain :: [(Int, Int)] -> Maybe [(Int, Int)]
 chain []    = Just []
@@ -11,17 +12,11 @@ chain (h:t) =
 search :: (Int,Int) -> [(Int,Int)] -> [[(Int,Int)]]
 search d []  = [[d]]
 search d bag =
-  map (d:) $ concat [ search candidate (bag `minus` i)
-                    | i <- [0..(length bag - 1)],
-                      let d' = bag !! i
+  map (d:) $ concat [ search candidate (delete d' bag)
+                    | d' <- bag
                     , candidate <- [d', swap d'] 
                     , conn d candidate
                     ]
-
-minus :: [a] -> Int -> [a]
-minus b i =
-  let s = splitAt i b
-  in fst s ++ tail (snd s)
 
 loops :: [(Int, Int)] -> Bool
 loops l = conn (last l) (head l)

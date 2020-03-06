@@ -1,13 +1,12 @@
 module Dominoes (chain) where
 
 import Data.Tuple (swap)
+import Safe (headMay)
 
 chain :: [(Int, Int)] -> Maybe [(Int, Int)]
 chain []    = Just []
 chain (h:t) =
-  let s = filter loops $ search h t
-  in if null s then Nothing
-  else Just (head s)
+  headMay $ filter loops $ search h t
 
 search :: (Int,Int) -> [(Int,Int)] -> [[(Int,Int)]]
 search d []  = [[d]]

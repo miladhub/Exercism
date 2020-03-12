@@ -9,37 +9,22 @@ module BankAccount
 import Control.Monad.STM (atomically)
 import Control.Concurrent.STM (TVar, newTVar, readTVar, writeTVar)
 
-data Account = Account
-  {
-    balance :: Integer
-  , open :: Bool
-  }
-
-type BankAccount = TVar Account
+type BankAccount = TVar (Maybe Integer)
 
 closeAccount :: BankAccount -> IO ()
-closeAccount account = atomically $ do
-  acc <- readTVar account
-  writeTVar account (acc {open = False})
+closeAccount account = atomically $
+  writeTVar account Nothing
 
 getBalance :: BankAccount -> IO (Maybe Integer)
-getBalance account = atomically $ do
-  acc <- readTVar account
-  return $
-    if open acc then Just (balance acc)
-    else Nothing
+getBalance account = atomically $
+  readTVar account
 
 incrementBalance :: BankAccount -> Integer -> IO (Maybe Integer)
 incrementBalance account amount = atomically $ do
   acc <- readTVar account
-  if open acc then
-    let new = amount + balance acc
-    in do
-      writeTVar account (acc {balance = new})
-      return (Just new)
-  else
-    return Nothing
+  let new = (+ amount) <$> acc
+  writeTVar account new
+  return new  
 
 openAccount :: IO BankAccount
-openAccount = atomically (newTVar $ Account 0 True)
-
+openAccount = atomically $ newTVar (Just 0)  

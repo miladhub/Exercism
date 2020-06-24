@@ -1,18 +1,46 @@
 module Robot (Robot, initialState, mkRobot, resetName, robotName) where
 
-import Control.Monad.State (StateT)
+import Control.Monad.State (StateT, get, put, liftIO, replicateM)
+import System.Random (getStdRandom, randomR)
+import Control.Monad.STM (atomically)
+import Control.Concurrent.STM.TVar (TVar, newTVarIO, readTVarIO, writeTVar)
 
-data Robot = Dummy1
-data RunState = Dummy2
+type Robot = TVar String
+type RunState = [String]
 
 initialState :: RunState
-initialState = error "You need to implement this function"
+initialState = []
 
 mkRobot :: StateT RunState IO Robot
-mkRobot = error "You need to implement this function."
+mkRobot = do
+  ns <- get
+  n <- liftIO $ uniqueName ns
+  put (n:ns)
+  liftIO $ newTVarIO n
 
 resetName :: Robot -> StateT RunState IO ()
-resetName robot = error "You need to implement this function."
+resetName r = do
+  ns <- get
+  n <- liftIO $ readTVarIO r
+  put (n:ns)
+  n' <- liftIO $ uniqueName (n:ns)
+  liftIO $ atomically (writeTVar r n')
+  return ()
 
 robotName :: Robot -> IO String
-robotName robot = error "You need to implement this function."
+robotName = readTVarIO
+
+uniqueName :: [String] -> IO String
+uniqueName ns = do
+  n <- rndName
+  if (elem n ns) then uniqueName ns
+  else return n
+
+rndName :: IO String
+rndName = (++) <$> replicateM 2 rndChar <*> replicateM 3 rndDigit
+
+rndChar :: IO Char
+rndChar = getStdRandom $ randomR ('A', 'Z')
+
+rndDigit :: IO Char
+rndDigit = getStdRandom $ randomR ('0', '9')

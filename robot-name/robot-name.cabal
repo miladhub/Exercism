@@ -1,0 +1,42 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.33.0.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: 6a15675d5e5a46b3f79349d71dc3a7a353c2e68a29aa6bc0e501f0ba67771168
+
+name:           robot-name
+version:        0.1.0.4
+build-type:     Simple
+
+library
+  exposed-modules:
+      Robot
+  other-modules:
+      Paths_robot_name
+  hs-source-dirs:
+      src
+  ghc-options: -Wall
+  build-depends:
+      base
+    , mtl
+    , random
+    , stm
+  default-language: Haskell2010
+
+test-suite test
+  type: exitcode-stdio-1.0
+  main-is: Tests.hs
+  other-modules:
+      Paths_robot_name
+  hs-source-dirs:
+      test
+  build-depends:
+      base
+    , hspec
+    , mtl
+    , random
+    , robot-name
+    , stm
+  default-language: Haskell2010

@@ -30,5 +30,5 @@ modAbs x m
 
 caesarEncodeRandom :: String -> IO (String, String)
 caesarEncodeRandom text = do
-  key <- take 3 <$> randomRs ('a', 'z') <$> newStdGen
+  key <- randomRs ('a', 'z') <$> newStdGen
   return (key, caesarEncode key text)

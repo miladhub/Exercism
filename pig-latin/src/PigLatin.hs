@@ -3,43 +3,33 @@ module PigLatin (translate) where
 import Data.Char (isLetter)
 
 translate :: String -> String
-translate xs =
-  unwords $ fmap pigWord $ words xs
+translate =
+  unwords . fmap pigWord . words
 
 pigWord :: String -> String
-pigWord xs =
-  let v = pickFirstVowel xs
-      c = pickFirstCons xs
-  in
-    case v of
-      Just _ -> xs ++ "ay"
-      Nothing ->
-        case c of
-          Just (h, t) -> t ++ h ++ "ay"
-          Nothing -> ""
+pigWord xs
+  | null xs = ""
+  | startsWithVowel xs = xs ++ "ay"
+  | otherwise = t ++ cons ++ "ay"
+  where
+    (cons, t) = pickFirstCons xs
 
-pickFirstVowel :: String -> Maybe (String, String)
-pickFirstVowel xs
-  | null xs = Nothing
-  | isVowel (head xs) = Just ([head xs], tail xs)
-  | startsWith "xr" xs = Just ("xr", tail . tail $ xs)
-  | startsWith "yt" xs = Just ("yt", tail . tail $ xs)
-  | otherwise = Nothing
+startsWithVowel :: String -> Bool
+startsWithVowel xs
+  | isVowel (head xs) = True
+  | startsWith "xr" xs = True
+  | startsWith "yt" xs = True
+  | otherwise = False
 
-pickFirstCons :: String -> Maybe (String, String)
-pickFirstCons xs =
-  let cons = takeWhile (\c -> isCons c && c /= 'y') xs
-      rest = subStr (length cons) xs 
-  in
-    if (startsWith "qu" xs) then Just ("qu", subStr 2 xs)
-    else
-      if (startsWith "y" xs) then Just ("y", tail xs)
-      else
-        if (null cons) then Nothing
-        else
-          if (last cons == 'q' && startsWith "u" rest) then
-            Just (cons ++ "u", subStr (length $ cons ++ "u") xs)
-          else Just (cons, rest) 
+pickFirstCons :: String -> (String, String)
+pickFirstCons xs
+  | startsWith "qu" xs = ("qu", subStr 2 xs)
+  | startsWith "y" xs = ("y", tail xs)
+  | last cons == 'q' && startsWith "u" rest = (cons ++ "u", subStr (length $ cons ++ "u") xs)  
+  | otherwise = (cons, rest)
+  where
+    cons = takeWhile (\c -> isCons c && c /= 'y') xs
+    rest = subStr (length cons) xs 
 
 isVowel :: Char -> Bool
 isVowel c = c `elem` "aeiou"

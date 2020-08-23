@@ -23,10 +23,10 @@ startsWithVowel xs
 
 pickFirstCons :: String -> (String, String)
 pickFirstCons xs
-  | startsWith "qu" xs = ("qu", subStr 2 xs)
-  | startsWith "y" xs = ("y", tail xs)
-  | last cons == 'q' && startsWith "u" rest = (cons ++ "u", subStr (length $ cons ++ "u") xs)  
-  | otherwise = (cons, rest)
+  | startsWith "qu" xs = split "qu" xs
+  | startsWith "y" xs = split "y" xs
+  | last cons == 'q' && startsWith "u" rest = split (cons ++ "u") xs
+  | otherwise = split cons xs
   where
     cons = takeWhile (\c -> isCons c && c /= 'y') xs
     rest = subStr (length cons) xs 
@@ -39,6 +39,9 @@ isCons c = isLetter c && not (isVowel c)
 
 startsWith :: String -> String -> Bool
 startsWith prefix xs = length prefix == (length $ filter (== True) $ zipWith (==) prefix xs)
+
+split :: String -> String -> (String, String)
+split prefix xs = (prefix, subStr (length prefix) xs)
 
 subStr :: Int -> String -> String
 subStr off xs = fmap (\i -> xs !! i) [off..length xs - 1] 

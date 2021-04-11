@@ -1,6 +1,5 @@
 module PigLatin (translate) where
 
-import Data.Char (isLetter)
 import Data.List (isPrefixOf)
 
 translate :: String -> String
@@ -29,14 +28,11 @@ pickFirstCons xs
   | last cons == 'q' && "u" `isPrefixOf` rest = split (cons ++ "u") xs
   | otherwise = split cons xs
   where
-    cons = takeWhile (\c -> isCons c && c /= 'y') xs
+    cons = takeWhile (\c -> not (isVowel c) && c /= 'y') xs
     rest = drop (length cons) xs 
 
 isVowel :: Char -> Bool
 isVowel c = c `elem` "aeiou"
-
-isCons :: Char -> Bool
-isCons c = isLetter c && not (isVowel c)
 
 split :: String -> String -> (String, String)
 split prefix xs = (prefix, drop (length prefix) xs)

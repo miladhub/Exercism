@@ -1,6 +1,7 @@
 module PigLatin (translate) where
 
 import Data.Char (isLetter)
+import Data.List (isPrefixOf)
 
 translate :: String -> String
 translate =
@@ -17,19 +18,19 @@ pigWord xs
 startsWithVowel :: String -> Bool
 startsWithVowel xs
   | isVowel (head xs) = True
-  | startsWith "xr" xs = True
-  | startsWith "yt" xs = True
+  | "xr" `isPrefixOf` xs = True
+  | "yt" `isPrefixOf` xs = True
   | otherwise = False
 
 pickFirstCons :: String -> (String, String)
 pickFirstCons xs
-  | startsWith "qu" xs = split "qu" xs
-  | startsWith "y" xs = split "y" xs
-  | last cons == 'q' && startsWith "u" rest = split (cons ++ "u") xs
+  | "qu" `isPrefixOf` xs = split "qu" xs
+  | "y" `isPrefixOf` xs = split "y" xs
+  | last cons == 'q' && "u" `isPrefixOf` rest = split (cons ++ "u") xs
   | otherwise = split cons xs
   where
     cons = takeWhile (\c -> isCons c && c /= 'y') xs
-    rest = subStr (length cons) xs 
+    rest = drop (length cons) xs 
 
 isVowel :: Char -> Bool
 isVowel c = c `elem` "aeiou"
@@ -37,11 +38,5 @@ isVowel c = c `elem` "aeiou"
 isCons :: Char -> Bool
 isCons c = isLetter c && not (isVowel c)
 
-startsWith :: String -> String -> Bool
-startsWith prefix xs = length prefix == (length $ filter (== True) $ zipWith (==) prefix xs)
-
 split :: String -> String -> (String, String)
-split prefix xs = (prefix, subStr (length prefix) xs)
-
-subStr :: Int -> String -> String
-subStr off xs = fmap (\i -> xs !! i) [off..length xs - 1] 
+split prefix xs = (prefix, drop (length prefix) xs)
